@@ -1,0 +1,9 @@
+package mlappliance;
+
+message TrainRequest {
+  repeated double features = 1;
+  optional bool label = 2;
+};
+
+message TrainResponse {
+};

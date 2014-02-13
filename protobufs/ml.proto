@@ -7,3 +7,10 @@ message TrainRequest {
 
 message TrainResponse {
 };
+
+message PredictRequest {
+  repeated double features = 1;
+};
+
+message PredictResponse {
+};

@@ -1,0 +1,97 @@
+<div>
+
+    <h2>Mlmodels</h2>
+
+    <script type = "text/ng-template" id="mlmodel-save.html">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="form" role="form" novalidate
+                      class="ng-scope ng-invalid ng-invalid-required ng-dirty"
+                      ng-submit="ok()">
+
+                    <div class="modal-header">
+                        <button type="button" class="close"
+                                ng-click="cancel()">&times;</button>
+                        <h4 class="modal-title" id="myMlmodelLabel">Create or edit a Mlmodel</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="text" class="form-control" name="id"
+                                   ng-model="mlmodel.id" readonly>
+                        </div>
+
+                        
+                        <div class="form-group">
+                            <label>name:</label>
+                            
+                            <input type="text" class="form-control" name="name"
+                                   ng-model="mlmodel.name" ng-required="true"
+                                   />
+                            <span class="error" ng-show="form.name.$error.minlength">Must be at least  characters.</span>
+                            <span class="error" ng-show="form.name.$error.maxlength">Must be at most  characters.</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>serialized:</label>
+                            
+                            <input type="text" class="form-control" name="serialized"
+                                   ng-model="mlmodel.serialized" ng-required="true"
+                                   />
+                            <span class="error" ng-show="form.serialized.$error.minlength">Must be at least  characters.</span>
+                            <span class="error" ng-show="form.serialized.$error.maxlength">Must be at most  characters.</span>
+                        </div>
+                        
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="cancel()">Cancel
+                        </button>
+                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </script>
+
+    <button class="btn btn-primary btn-lg" ng-click="create()">
+        <span class="glyphicon glyphicon-flash"></span> Create a new Mlmodel
+    </button>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                
+                <th>name</th>
+                
+                <th>serialized</th>
+                
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="mlmodel in mlmodels">
+                <td>{{mlmodel.id}}</td>
+                
+                <td>{{mlmodel.name }}</td>
+                
+                <td>{{mlmodel.serialized }}</td>
+                
+                <td>
+                    <button type="submit"
+                            ng-click="update(mlmodel.id)"
+                            class="btn">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </button>
+                    <button type="submit"
+                            ng-click="delete(mlmodel.id)"
+                            class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove-circle"></span> Delete
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

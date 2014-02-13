@@ -1,5 +1,46 @@
 {
 	"baseName": "mlserver",
-	"entities": [],
+	"entities": [
+		{
+			"name": "mlmodel",
+			"attrs": [
+				{
+					"attrName": "name",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				},
+				{
+					"attrName": "serialized",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "labeledpoint",
+			"attrs": [
+				{
+					"attrName": "label",
+					"attrType": "Boolean",
+					"enumValues": [],
+					"required": true
+				},
+				{
+					"attrName": "features",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
+		}
+	],
 	"resources": []
 }

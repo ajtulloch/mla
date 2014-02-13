@@ -13,4 +13,5 @@ message PredictRequest {
 };
 
 message PredictResponse {
+  optional double prediction = 1;
 };

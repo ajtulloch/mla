@@ -1,5 +1,3 @@
-all: | test
-
 proto:
 	mkdir -p gen
 	find . -iname '*.proto' | xargs -J % protoc --proto_path=. --python_out=gen %
@@ -13,3 +11,8 @@ requirements:
 
 test:
 	env/bin/nosetests
+
+server:
+	python server/run.py
+
+.PHONY: server test requirements freeze proto

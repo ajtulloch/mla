@@ -13,7 +13,7 @@ class Mlmodel(db.Model):
             name = self.name,
             serialized = self.serialized,
             id = self.id
-        )
+0        )
 
     def __repr__(self):
         return '<Mlmodel %r>' % (self.id)

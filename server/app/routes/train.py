@@ -14,15 +14,3 @@ def train():
     resp = pb.TrainResponse()
     return jsonify(protobuf_to_dict(resp)), 200
 
-
-@app.route('/predict', methods=['GET'])
-def predict():
-    print "Predict"
-    req = pb.PredictRequest(
-        features=request.json['features'],
-    )
-    prediction = trainer.predict(req)
-
-    resp = pb.PredictResponse(prediction=prediction)
-    return jsonify(protobuf_to_dict(resp)), 200
-

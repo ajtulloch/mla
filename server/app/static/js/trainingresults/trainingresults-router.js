@@ -12,4 +12,15 @@ angular.module('mlserver')
           }]
         }
       })
+      .when('/trainingresults/:id', {
+        templateUrl: 'views/trainingresults/trainingresults-detail.html',
+        controller: 'TrainingresultsDetailController',
+        resolve: {
+          resolvedTrainingresult: ['Trainingresults, $route', function (Trainingresults, $route) {
+            return Trainingresults.get({
+              id: $route.current.params.id,
+            });
+          }]
+        }
+      })
     }]);

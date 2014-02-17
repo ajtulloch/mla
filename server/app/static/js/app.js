@@ -1,5 +1,5 @@
 // Declare app level module which depends on filters, and services
-angular.module('mlserver', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
+angular.module('mlserver', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date', 'restangular'])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/', {

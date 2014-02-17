@@ -15,3 +15,11 @@ message PredictRequest {
 message PredictResponse {
   optional double prediction = 1;
 };
+
+message DataSetImportRequest {
+  optional string datasetName = 1;
+  repeated TrainRequest examples = 2;
+};
+
+message ExportRequest {
+};

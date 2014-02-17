@@ -40,6 +40,40 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"name": "dataset",
+			"attrs": [
+				{
+					"attrName": "name",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				},
+				{
+					"attrName": "examples",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "trainingresults",
+			"attrs": [
+				{
+					"attrName": "results",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
 		}
 	],
 	"resources": []

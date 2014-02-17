@@ -17,7 +17,7 @@ message PredictResponse {
 };
 
 message DataSetImportRequest {
-  optional string datasetName = 1;
+  optional string name = 1;
   repeated TrainRequest examples = 2;
 };
 

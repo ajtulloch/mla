@@ -1,8 +1,10 @@
-from app import app, db
-from app.models import dataset
+from app import app, db, reporter
+from app.models import dataset, trainingresults
 from flask import abort, jsonify, request
-import datetime
 import json
+
+import gen.protobufs.ml_pb2 as pb
+from protobuf_to_dict import protobuf_to_dict
 
 @app.route('/mlserver/datasets', methods = ['GET'])
 def get_all_datasets():
@@ -19,11 +21,24 @@ def get_dataset(id):
 @app.route('/mlserver/datasets', methods = ['POST'])
 def create_dataset():
     entity = dataset.Dataset(
-        name = request.json['name']
-        , examples = request.json['examples']
+        name = request.json['name'],
+        examples = json.dumps(request.json['examples'])
     )
     db.session.add(entity)
     db.session.commit()
+
+    results = reporter.report([
+        pb.TrainRequest(
+            label=e['label'],
+            features=e['features']) for e in json.loads(entity.examples)])
+
+    training_result_entity = trainingresults.Trainingresults(
+        results = json.dumps(results),
+        dataset_id = entity.id,
+    )
+    db.session.add(training_result_entity)
+    db.session.commit()
+
     return jsonify(entity.to_dict()), 201
 
 @app.route('/mlserver/datasets/<int:id>', methods = ['PUT'])

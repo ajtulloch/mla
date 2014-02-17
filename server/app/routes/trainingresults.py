@@ -19,7 +19,8 @@ def get_trainingresults(id):
 @app.route('/mlserver/trainingresults', methods = ['POST'])
 def create_trainingresults():
     entity = trainingresults.Trainingresults(
-        results = request.json['results']
+        results = request.json['results'],
+        dataset_id = request.json['dataset_id'],
     )
     db.session.add(entity)
     db.session.commit()
@@ -32,6 +33,7 @@ def update_trainingresults(id):
         abort(404)
     entity = trainingresults.Trainingresults(
         results = request.json['results'],
+        dataset_id = request.json['dataset_id'],
         id = id
     )
     db.session.merge(entity)

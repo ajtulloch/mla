@@ -3,7 +3,7 @@ from app import db
 class Dataset(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     
-    name = db.Column(db.String)
+    name = db.Column(db.String, unique = True)
     
     examples = db.Column(db.String)
     

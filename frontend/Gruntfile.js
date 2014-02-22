@@ -1,459 +1,194 @@
-// Generated on 2014-02-22 using generator-go-angular 0.1.1
-'use strict';
-var LIVERELOAD_PORT = 35729;
-
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
-
-module.exports = function (grunt) {
-  require('load-grunt-tasks')(grunt);
-  require('time-grunt')(grunt);
-
-  // configurable paths
-  var yeomanConfig = {
-    app: 'app',
-    dist: 'dist'
-  };
-
-  try {
-    yeomanConfig.app = require('./bower.json').appPath || yeomanConfig.app;
-  } catch (e) {}
-
+module.exports = function( grunt ) {
+  'use strict';
+  //
+  // Grunt configuration:
+  //
+  // https://github.com/cowboy/grunt/blob/master/docs/getting_started.md
+  //
   grunt.initConfig({
-    yeoman: yeomanConfig,
+
+    // Project configuration
+    // ---------------------
+
+    // specify an alternate install location for Bower
+    bower: {
+      dir: 'app/components'
+    },
+
+    // Coffee to JS compilation
+    coffee: {
+      compile: {
+        files: {
+          'temp/js/*.js': 'app/static/js/*.coffee'
+        },
+        options: {
+          basePath: 'app/static/js'
+        }
+      }
+    },
+
+    // compile .scss/.sass to .css using Compass
+    compass: {
+      dist: {
+        // http://compass-style.org/help/tutorials/configuration-reference/#configuration-properties
+        options: {
+          css_dir: 'app/static/css',
+          sass_dir: 'app/static/css',
+          images_dir: 'app/static/img',
+          javascripts_dir: 'app/static/js',
+          force: true
+        }
+      }
+    },
+
+    // generate application cache manifest
+    manifest:{
+      dest: ''
+    },
+
+    // headless testing through PhantomJS
+    mocha: {
+      all: ['test/**/*.html']
+    },
+
+    // default watch configuration
     watch: {
       coffee: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-        tasks: ['coffee:dist']
-      },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.coffee'],
-        tasks: ['coffee:test']
+        files: 'app/static/js/*.coffee',
+        tasks: 'coffee reload'
       },
       compass: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass:server', 'autoprefixer']
-      },
-      styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['copy:styles', 'autoprefixer']
-      },
-      livereload: {
-        options: {
-          livereload: LIVERELOAD_PORT
-        },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
-          '.tmp/styles/{,*/}*.css',
-          '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-        ]
-      }
-    },
-    autoprefixer: {
-      options: ['last 1 version'],
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      }
-    },
-    gobuild: {
-      dist: {
-        options: {
-          dist: '<%= yeoman.dist %>/main'
-        }
-      }
-    },
-    goserver: {
-      options: {
-        port: 9000,
-        // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost'
+          'app/static/css/*.{scss,sass}'
+        ],
+        tasks: 'compass reload'
       },
-      livereload: {
-        options: {
-          staticDirs: ['.tmp', yeomanConfig.app]
-        }
-      },
-      test: {
-        options: {
-          port: 9001,
-          staticDirs: ['.tmp', 'test']
-        }
-      },
-      dist: {
-        options: {
-          port: 9002,
-          dist: '<%= gobuild.dist.options.dist %>',
-          staticDirs: [yeomanConfig.dist]
-        }
+      reload: {
+        files: [
+          'app/templates/*.html',
+          'app/static/css/**/*.css',
+          'app/static/js/**/*.js',
+          'app/static/img/**/*'
+        ],
+        tasks: 'reload'
       }
     },
-    open: {
-      server: {
-        url: 'http://localhost:<%= goserver.options.port %>'
-      }
+
+    // default lint configuration, change this to match your setup:
+    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#lint-built-in-task
+    lint: {
+      files: [
+        'Gruntfile.js',
+        'app/static/js/**/*.js',
+        'spec/**/*.js'
+      ]
     },
-    clean: {
-      dist: {
-        files: [{
-          dot: true,
-          src: [
-            '.tmp',
-            '<%= yeoman.dist %>/*',
-            '!<%= yeoman.dist %>/.git*'
-          ]
-        }]
-      },
-      server: '.tmp'
-    },
+
+    // specifying JSHint options and globals
+    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#specifying-jshint-options-and-globals
     jshint: {
       options: {
-        jshintrc: '.jshintrc'
+        curly: true,
+        eqeqeq: true,
+        immed: true,
+        latedef: true,
+        newcap: true,
+        noarg: true,
+        sub: true,
+        undef: true,
+        boss: true,
+        eqnull: true,
+        browser: true
       },
-      all: [
-        'Gruntfile.js',
-        '<%= yeoman.app %>/scripts/{,*/}*.js'
-      ]
-    },
-    coffee: {
-      options: {
-        sourceMap: true,
-        sourceRoot: ''
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/scripts',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/scripts',
-          ext: '.js'
-        }]
-      },
-      test: {
-        files: [{
-          expand: true,
-          cwd: 'test/spec',
-          src: '{,*/}*.coffee',
-          dest: '.tmp/spec',
-          ext: '.js'
-        }]
+      globals: {
+        jQuery: true
       }
     },
-    compass: {
-      options: {
-        sassDir: '<%= yeoman.app %>/styles',
-        cssDir: '.tmp/styles',
-        generatedImagesDir: '.tmp/images/generated',
-        imagesDir: '<%= yeoman.app %>/images',
-        javascriptsDir: '<%= yeoman.app %>/scripts',
-        fontsDir: '<%= yeoman.app %>/styles/fonts',
-        importPath: '<%= yeoman.app %>/bower_components',
-        httpImagesPath: '/images',
-        httpGeneratedImagesPath: '/images/generated',
-        httpFontsPath: '/styles/fonts',
-        relativeAssets: false
-      },
-      dist: {},
-      server: {
-        options: {
-          debugInfo: true
-        }
-      }
+
+    // Build configuration
+    // -------------------
+
+    // the staging directory used during the process
+    staging: 'temp',
+    // final build output
+    output: 'dist',
+
+    mkdirs: {
+      staging: 'app/'
     },
-    // not used since Uglify task does concat,
-    // but still available if needed
-    /*concat: {
-      dist: {}
-    },*/
+
+    // Below, all paths are relative to the staging directory, which is a copy
+    // of the app/ directory. Any .gitignore, .ignore and .buildignore file
+    // that might appear in the app/ tree are used to ignore these values
+    // during the copy process.
+
+    // concat css/**/*.css files, inline @import, output a single minified css
+    css: {
+      'css/main.css': ['css/**/*.css']
+    },
+
+    // renames JS/CSS to prepend a hash of their contents for easier
+    // versioning
     rev: {
-      dist: {
-        files: {
-          src: [
-            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-            '<%= yeoman.dist %>/styles/{,*/}*.css',
-            '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-            '<%= yeoman.dist %>/styles/fonts/*'
-          ]
-        }
-      }
+      js: 'js/**/*.js',
+      css: 'css/**/*.css',
+      img: 'img/**'
     },
-    useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
-      options: {
-        dest: '<%= yeoman.dist %>'
-      }
+
+    // usemin handler should point to the file containing
+    // the usemin blocks to be parsed
+    'usemin-handler': {
+      html: 'index.html'
     },
+
+    // update references in HTML/CSS to revved files
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        dirs: ['<%= yeoman.dist %>']
-      }
+      html: ['**/*.html'],
+      css: ['**/*.css']
     },
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
+
+    // HTML minification
+    html: {
+      files: ['**/*.html']
     },
-    svgmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.svg',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
+
+    // Optimizes JPGs and PNGs (with jpegtran & optipng)
+    img: {
+      dist: '<config:rev.img>'
     },
-    cssmin: {
-      // By default, your `index.html` <!-- Usemin Block --> will take care of
-      // minification. This option is pre-configured if you do not wish to use
-      // Usemin blocks.
-      // dist: {
-      //   files: {
-      //     '<%= yeoman.dist %>/styles/main.css': [
-      //       '.tmp/styles/{,*/}*.css',
-      //       '<%= yeoman.app %>/styles/{,*/}*.css'
-      //     ]
-      //   }
-      // }
+
+    // rjs configuration. You don't necessarily need to specify the typical
+    // `path` configuration, the rjs task will parse these values from your
+    // main module, using http://requirejs.org/docs/optimization.html#mainConfigFile
+    //
+    // name / out / mainConfig file should be used. You can let it blank if
+    // you're using usemin-handler to parse rjs config from markup (default
+    // setup)
+    rjs: {
+      mainFile: '../app/templates/base.html',
+      // no minification, is done by the min task
+      optimize: 'none',
+      baseUrl: '../app/static/js',
+      wrap: true,
+      name: 'main',
+      out: '../frontend/static/js/script.js'
     },
-    htmlmin: {
-      dist: {
-        options: {
-          /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
-        },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
-      }
+
+    // While Yeoman handles concat/min when using
+    // usemin blocks, you can still use them manually
+    concat: {
+      dist: ''
     },
-    // Put files not handled in other tasks here
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,png,txt}',
-            '.htaccess',
-            'bower_components/**/*',
-            'images/{,*/}*.{gif,webp}',
-            'styles/fonts/*'
-          ]
-        }, {
-          expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: [
-            'generated/*'
-          ]
-        }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        dest: '.tmp/styles/',
-        src: '{,*/}*.css'
-      }
-    },
-    concurrent: {
-      server: [
-        'coffee:dist',
-        'compass:server',
-        'copy:styles'
-      ],
-      test: [
-        'coffee',
-        'compass',
-        'copy:styles'
-      ],
-      dist: [
-        'coffee',
-        'compass:dist',
-        'copy:styles',
-        'imagemin',
-        'svgmin',
-        'htmlmin'
-      ]
-    },
-    karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
-      }
-    },
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
-      }
-    },
-    ngmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
-          src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
-        }]
-      }
-    },
-    uglify: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '<%= yeoman.dist %>/scripts/scripts.js'
-          ]
-        }
-      }
+
+    min: {
+      dist: ''
     }
   });
 
+  // Alias the `test` task to run the `mocha` task instead
+  grunt.registerTask('test', 'server:phantom mocha');
 
-  function runGo(cmd, args, opts, done) {
-    args.push('-p', opts.port);
-    args.push('-h', opts.hostname);
-    for (var i=0; i < opts.staticDirs.length-1;i++) {
-      args.push('-static_dir', opts.staticDirs[i]);
-    }
-    if (opts.staticDirs.length > 0) {
-      args.push(opts.staticDirs[opts.staticDirs.length-1]);
-    }
+  // Load the build task
+  grunt.loadNpmTasks('yeoman-flask');
 
-    var goProcess = grunt.util.spawn({
-        cmd: cmd,
-        args: args,
-        opts: {
-          stdio:'pipe'
-        }
-      },
-      function(error, result, code) {
-        if (error) {
-          grunt.log.error(String(result));
-          grunt.fail.fatal('go-server exited with code: '+code, 3);
-        }
-      }
-    );
-    goProcess.stdout.pipe(process.stdout);
-    goProcess.stderr.pipe(process.stderr);
-    // Wait for spawned server to print something
-    goProcess.stdout.once('data', function() {
-      done();
-    });
-    process.on('exit', function() {
-      grunt.log.writeln('Killing go-server('+goProcess.pid+')...');
-      process.kill(-process.pid, 'SIGINT');
-      grunt.log.oklns('Killed go-server');
-    });
-
-  }
-
-  grunt.registerMultiTask('goserver', 'Running go server', function() {
-    var opts = this.options({
-        port: 9000,
-        hostname: 'localhost',
-      });
-    if (opts.dist) {
-      this.async(); // wait forever to keep the server alive
-      runGo(opts.dist,[], opts, function() {});
-    } else {
-      runGo('go',['run', 'main.go'], opts, this.async());
-    }
-  });
-
-  grunt.registerMultiTask('gobuild', 'Building go server', function() {
-    var opts = this.options({
-        dist: './main',
-        flags: [],
-      });
-
-    var done = this.async();
-    grunt.util.spawn({
-        cmd: 'go',
-        args: ['build','-o',opts.dist].concat(opts.flags),
-        opts: {
-          stdio:'inherit'
-        }
-      },
-      function(error, result, code) {
-        if (error) {
-          grunt.log.error(String(result));
-          grunt.fail.fatal('go-build exited with code: '+code, 3);
-        } else {
-          done();
-        }
-      }
-    );
-  });
-
-  grunt.registerTask('server', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'goserver:dist']);
-    }
-
-    grunt.task.run([
-      'clean:server',
-      'concurrent:server',
-      'autoprefixer',
-      'goserver:livereload',
-      'open',
-      'watch'
-    ]);
-  });
-
-  grunt.registerTask('test', [
-    'clean:server',
-    'concurrent:test',
-    'autoprefixer',
-    'goserver:test',
-    'karma'
-  ]);
-
-  grunt.registerTask('build', [
-    'clean:dist',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'copy:dist',
-    'cdnify',
-    'ngmin',
-    'cssmin',
-    'uglify',
-    'rev',
-    'usemin',
-    'gobuild:dist'
-  ]);
-
-  grunt.registerTask('default', [
-    'jshint',
-    'test',
-    'build'
-  ]);
 };

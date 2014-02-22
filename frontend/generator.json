@@ -13,6 +13,19 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"name": "BatchTrainingRequest",
+			"attrs": [
+				{
+					"attrName": "trainingData",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
 		}
 	],
 	"resources": []

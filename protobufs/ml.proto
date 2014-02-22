@@ -1,25 +1,39 @@
 package mlappliance;
 
-message TrainRequest {
+message OnlineTrainRequest {
   repeated double features = 1;
   optional bool label = 2;
 };
 
-message TrainResponse {
+message OnlineTrainResponse {
 };
 
-message PredictRequest {
+message OnlinePredictRequest {
   repeated double features = 1;
 };
 
-message PredictResponse {
+message OnlinePredictResponse {
   optional double prediction = 1;
 };
 
-message DataSetImportRequest {
-  optional string name = 1;
-  repeated TrainRequest examples = 2;
+enum DataSource {
+  INLINE = 1;
+  S3 = 2;
+  HDFS = 3;
 };
 
-message ExportRequest {
+message TrainingData {
+  optional DataSource source = 1;
+  // If source is inline
+  repeated OnlineTrainRequest inlineData = 2;
+  // If source is S3
+  optional string s3URL = 3;
+};
+
+message BatchTrainRequest {
+  optional TrainingData trainingData = 1;
+};
+
+message TrainingReport {
+  optional string jsonResult = 1;
 };

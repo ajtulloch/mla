@@ -1,3 +1,5 @@
+import threading
+
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -10,3 +12,6 @@ from app.models import TrainingResults
 from app.routes import index
 
 from app.routes import Trainingresults
+from app.queue import queue
+
+threading.Thread(target=queue.start_training_queue).start()

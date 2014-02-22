@@ -14,7 +14,7 @@ def on_batch_training_task(channel, report_queue):
         report = worker.batch_train(request)
         channel.basic_publish(
             exchange='',
-            routing_key='hello',
+            routing_key=report_queue,
             body=report.SerializeToString())
     return runner
 

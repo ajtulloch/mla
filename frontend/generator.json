@@ -1,0 +1,19 @@
+{
+	"baseName": "app",
+	"entities": [
+		{
+			"name": "TrainingResults",
+			"attrs": [
+				{
+					"attrName": "jsonString",
+					"attrType": "String",
+					"minLength": "",
+					"maxLength": "",
+					"enumValues": [],
+					"required": true
+				}
+			]
+		}
+	],
+	"resources": []
+}

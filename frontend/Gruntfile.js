@@ -1,194 +1,116 @@
-module.exports = function( grunt ) {
-  'use strict';
-  //
-  // Grunt configuration:
-  //
-  // https://github.com/cowboy/grunt/blob/master/docs/getting_started.md
-  //
+'use strict';
+
+var proxySnippet = require('grunt-connect-proxy/lib/utils').proxyRequest;
+
+module.exports = function (grunt) {
+  require('load-grunt-tasks')(grunt);
+  require('time-grunt')(grunt); 
+
   grunt.initConfig({
-
-    // Project configuration
-    // ---------------------
-
-    // specify an alternate install location for Bower
-    bower: {
-      dir: 'app/components'
+    yeoman: {
+      // configurable paths
+      app: require('./bower.json').appPath || 'app/static',
+      dist: 'app/static'
     },
-
-    // Coffee to JS compilation
-    coffee: {
-      compile: {
-        files: {
-          'temp/js/*.js': 'app/static/js/*.coffee'
-        },
-        options: {
-          basePath: 'app/static/js'
-        }
-      }
-    },
-
-    // compile .scss/.sass to .css using Compass
-    compass: {
+    sync: {
       dist: {
-        // http://compass-style.org/help/tutorials/configuration-reference/#configuration-properties
+        files: [{
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: '**'
+        }]
+      }
+    },
+    watch: {
+      options: {
+        livereload: 35729
+      },
+      src: {
+        files: [
+          '<%= yeoman.app %>/*.html',
+          '<%= yeoman.app %>/css/**/*',
+          '<%= yeoman.app %>/js/**/*',
+          '<%= yeoman.app %>/views/**/*'
+        ],
+        //tasks: ['sync:dist']
+      }
+    },
+    connect: {
+      proxies: [
+        {
+          context: '/app',
+          host: 'localhost',
+          port: 5000,
+          https: false,
+          changeOrigin: false
+        }
+      ],
+      options: {
+        port: 9000,
+        // Change this to '0.0.0.0' to access the server from outside.
+        hostname: 'localhost',
+        livereload: 35729
+      },
+      livereload: {
         options: {
-          css_dir: 'app/static/css',
-          sass_dir: 'app/static/css',
-          images_dir: 'app/static/img',
-          javascripts_dir: 'app/static/js',
-          force: true
+          open: true,
+          base: [
+            '<%= yeoman.app %>'
+          ],
+          middleware: function (connect) {
+            return [
+              proxySnippet,
+              connect.static(require('path').resolve('app/static'))
+            ];
+          }
+        }
+      },
+      /*
+      dist: {
+        options: {
+          base: '<%= yeoman.dist %>'
         }
       }
+      */
     },
-
-    // generate application cache manifest
-    manifest:{
-      dest: ''
-    },
-
-    // headless testing through PhantomJS
-    mocha: {
-      all: ['test/**/*.html']
-    },
-
-    // default watch configuration
-    watch: {
-      coffee: {
-        files: 'app/static/js/*.coffee',
-        tasks: 'coffee reload'
+    // Put files not handled in other tasks here
+    copy: {
+      dist: {
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: '<%= yeoman.app %>',
+          dest: '<%= yeoman.dist %>',
+          src: '**'
+        }]
       },
-      compass: {
-        files: [
-          'app/static/css/*.{scss,sass}'
-        ],
-        tasks: 'compass reload'
-      },
-      reload: {
-        files: [
-          'app/templates/*.html',
-          'app/static/css/**/*.css',
-          'app/static/js/**/*.js',
-          'app/static/img/**/*'
-        ],
-        tasks: 'reload'
+    },
+    // Test settings
+    karma: {
+      unit: {
+        configFile: 'test/config/karma.conf.js',
+        singleRun: true
       }
     },
-
-    // default lint configuration, change this to match your setup:
-    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#lint-built-in-task
-    lint: {
-      files: [
-        'Gruntfile.js',
-        'app/static/js/**/*.js',
-        'spec/**/*.js'
-      ]
-    },
-
-    // specifying JSHint options and globals
-    // https://github.com/cowboy/grunt/blob/master/docs/task_lint.md#specifying-jshint-options-and-globals
-    jshint: {
+    bowercopy: {
       options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        browser: true
+        destPrefix: '<%= yeoman.app %>'
       },
-      globals: {
-        jQuery: true
+      test: {
+        files: {
+          'test/lib/angular-mocks': 'angular-mocks',
+          'test/lib/angular-scenario': 'angular-scenario'
+        }
       }
-    },
-
-    // Build configuration
-    // -------------------
-
-    // the staging directory used during the process
-    staging: 'temp',
-    // final build output
-    output: 'dist',
-
-    mkdirs: {
-      staging: 'app/'
-    },
-
-    // Below, all paths are relative to the staging directory, which is a copy
-    // of the app/ directory. Any .gitignore, .ignore and .buildignore file
-    // that might appear in the app/ tree are used to ignore these values
-    // during the copy process.
-
-    // concat css/**/*.css files, inline @import, output a single minified css
-    css: {
-      'css/main.css': ['css/**/*.css']
-    },
-
-    // renames JS/CSS to prepend a hash of their contents for easier
-    // versioning
-    rev: {
-      js: 'js/**/*.js',
-      css: 'css/**/*.css',
-      img: 'img/**'
-    },
-
-    // usemin handler should point to the file containing
-    // the usemin blocks to be parsed
-    'usemin-handler': {
-      html: 'index.html'
-    },
-
-    // update references in HTML/CSS to revved files
-    usemin: {
-      html: ['**/*.html'],
-      css: ['**/*.css']
-    },
-
-    // HTML minification
-    html: {
-      files: ['**/*.html']
-    },
-
-    // Optimizes JPGs and PNGs (with jpegtran & optipng)
-    img: {
-      dist: '<config:rev.img>'
-    },
-
-    // rjs configuration. You don't necessarily need to specify the typical
-    // `path` configuration, the rjs task will parse these values from your
-    // main module, using http://requirejs.org/docs/optimization.html#mainConfigFile
-    //
-    // name / out / mainConfig file should be used. You can let it blank if
-    // you're using usemin-handler to parse rjs config from markup (default
-    // setup)
-    rjs: {
-      mainFile: '../app/templates/base.html',
-      // no minification, is done by the min task
-      optimize: 'none',
-      baseUrl: '../app/static/js',
-      wrap: true,
-      name: 'main',
-      out: '../frontend/static/js/script.js'
-    },
-
-    // While Yeoman handles concat/min when using
-    // usemin blocks, you can still use them manually
-    concat: {
-      dist: ''
-    },
-
-    min: {
-      dist: ''
     }
   });
 
-  // Alias the `test` task to run the `mocha` task instead
-  grunt.registerTask('test', 'server:phantom mocha');
-
-  // Load the build task
-  grunt.loadNpmTasks('yeoman-flask');
-
+  grunt.registerTask('server', function (target) {
+    grunt.task.run([
+      //'copy:dist',
+      'configureProxies',
+      'connect:livereload',
+      'watch'
+    ]);
+  });
 };

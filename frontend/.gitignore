@@ -1,4 +1,8 @@
 .DS_Store
-*~
+*.db
 *.pyc
-.sass-cache
+*.swp
+*~
+db_repository
+flask
+node_modules

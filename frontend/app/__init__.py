@@ -1,15 +1,12 @@
-from flask import Flask, url_for
-import os
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
+app.config.from_object('config')
+db = SQLAlchemy(app)
 
-# Determines the destination of the build. Only usefull if you're using Frozen-Flask
-app.config['FREEZER_DESTINATION'] = os.path.dirname(os.path.abspath(__file__))+'/../build'
 
-# Function to easily find your assets
-# In your template use <link rel=stylesheet href="{{ static('filename') }}">
-app.jinja_env.globals['static'] = (
-    lambda filename: url_for('static', filename = filename)
-)
+from app.models import TrainingResults
+from app.routes import index
 
-from app import views
+from app.routes import Trainingresults

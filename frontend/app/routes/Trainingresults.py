@@ -1,10 +1,10 @@
 from app import app, db
 from app.models import TrainingResults
 from flask import abort, jsonify, request
-import datetime
 import json
 
-@app.route('/app/Trainingresults', methods = ['GET'])
+
+@app.route('/app/Trainingresults', methods=['GET'])
 def get_all_Trainingresults():
     entities = TrainingResults.TrainingResults.query.all()
     return json.dumps([entity.to_dict() for entity in entities])

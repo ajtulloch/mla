@@ -70,8 +70,6 @@ var TrainingResultsSaveController =
   function ($scope, $modalInstance, TrainingResults) {
     $scope.TrainingResults = TrainingResults;
 
-    
-
     $scope.ok = function () {
       $modalInstance.close($scope.TrainingResults);
     };
@@ -88,6 +86,7 @@ angular.module('app')
      function($scope, $routeParams, TrainingResults, $log) {
        $scope.report = TrainingResults.get({id:$routeParams.reportId}, function() {
          $scope.report.json = angular.fromJson($scope.report.jsonString);
+         // Fake data for now
          $scope.report.summary = {
            numSamples: 100,
            numPositives: 80,

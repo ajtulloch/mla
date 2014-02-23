@@ -4,7 +4,6 @@ angular.module('app', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date'])
     $routeProvider
       .when('/', {
         templateUrl: 'views/home/home.html', 
-        controller: 'HomeController'});
-    
-      // .otherwise({redirectTo: '/'});
+        controller: 'HomeController'})
+      .otherwise({redirectTo: '/'});
   }]);

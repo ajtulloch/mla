@@ -61,10 +61,14 @@
       <tbody>
         <tr ng-repeat="TrainingResults in Trainingresults">
           <td>{{TrainingResults.id}}</td>
-          
           <td>{{TrainingResults.jsonString }}</td>
           
           <td>
+            <a ng-href="#/reports/{{TrainingResults.id}}">
+              <button class="btn btn-success">
+                <span class="glyphicon glyphicon-zoom-in"></span> View
+              </button>
+            </a>
             <button type="submit"
                     ng-click="update(TrainingResults.id)"
                     class="btn">

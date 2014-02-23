@@ -12,4 +12,8 @@ angular.module('app')
           }]
         }
       })
+      .when('/reports/:reportId', {
+        templateUrl: 'views/TrainingResults/analysis.html',
+        controller: 'TrainingResultsCtrl'
+      });
     }]);

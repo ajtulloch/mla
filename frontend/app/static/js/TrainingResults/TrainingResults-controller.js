@@ -80,3 +80,17 @@ var TrainingResultsSaveController =
       $modalInstance.dismiss('cancel');
     };
   };
+
+angular.module('app')
+  .controller(
+    'TrainingResultsCtrl',
+    ['$scope', '$routeParams', 'TrainingResults', '$log',
+     function($scope, $routeParams, TrainingResults, $log) {
+       $scope.report = TrainingResults.get({id:$routeParams.reportId}, function() {
+         $scope.report.json = angular.fromJson($scope.report.jsonString);
+       });
+       $log.debug($scope.report);
+     }
+    ]
+  )
+

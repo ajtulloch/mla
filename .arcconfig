@@ -1,0 +1,6 @@
+{
+  "project_id" : "ML Appliance",
+  "conduit_uri" : "http://phabricator.tullo.ch/",
+  "git.default-relative-commit": "HEAD^",
+  "arc.feature.start.default": "origin/master"
+}

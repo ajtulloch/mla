@@ -3,7 +3,7 @@
 angular.module('app')
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
-      .when('/Trainingresults', {
+      .when('/reports', {
         templateUrl: 'views/TrainingResults/Trainingresults.html',
         controller: 'TrainingResultsController',
         resolve:{

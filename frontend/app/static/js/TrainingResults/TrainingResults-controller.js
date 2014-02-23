@@ -88,6 +88,11 @@ angular.module('app')
      function($scope, $routeParams, TrainingResults, $log) {
        $scope.report = TrainingResults.get({id:$routeParams.reportId}, function() {
          $scope.report.json = angular.fromJson($scope.report.jsonString);
+         $scope.report.summary = {
+           numSamples: 100,
+           numPositives: 80,
+           numNegatives: 50,
+         };
        });
        $log.debug($scope.report);
      }

@@ -1,7 +1,7 @@
 proto:
 	mkdir -p gen
 	find . -iname '*.proto' | xargs -J % protoc --proto_path=. --python_out=gen %
-	touch gen/__init__.py
+	touch gen/protobufs/__init__.py
 
 freeze:
 	pip freeze > requirements.txt
@@ -12,7 +12,8 @@ requirements:
 test:
 	env/bin/nosetests
 
-server:
-	python server/run.py
+db:
+	cd frontend
+	python db_create.py
 
 .PHONY: server test requirements freeze proto

@@ -15,34 +15,39 @@ channel.queue_declare(queue=app.config['REPORT_QUEUE'])
 
 def on_report(ch, method, properties, body):
     # Writes the recieved response to the DB
-    log.info("Recieved report: %s", body)
-    request = ml_pb2.TrainingReport()
-    request.ParseFromString(body)
+    try:
+        log.info("Recieved report: %s", body)
+        request = ml_pb2.TrainingReport()
+        request.ParseFromString(body)
 
-    log.info("Parsed report to request: %s", request)
-    entity = TrainingResults.TrainingResults(jsonString=request.jsonString)
-    db.session.add(entity)
-    db.session.commit()
-
-    log.info("Saved entity to db: %s", entity)
+        log.info("Parsed report to request: %s", request)
+        entity = TrainingResults.TrainingResults(jsonString=request.jsonResult)
+        db.session.add(entity)
+        db.session.commit()
+        log.info("Saved entity to db: %s", entity)
+    except:
+        log.exception("Exception in reporting")
 
 
 def send_batch_training_request(request):
-    log.info("Sending batch request: %s", request)
+    log.info("Sending batch request to queue")
+    log.debug("Sending batch request: %s", request)
     channel.basic_publish(
         exchange='',
         routing_key=app.config['TRAINING_QUEUE'],
         body=request.SerializeToString())
-    log.info("Sent batch request: %s", request)
-    return True
+    log.debug("Sent batch request: %s", request)
+    log.info("Sent batch request")
 
 
-def start_training_queue():
+def start_training_report_queue():
     log.info("Starting report queue")
     channel.basic_consume(on_report, queue=app.config['REPORT_QUEUE'], no_ack=True)
     try:
         channel.start_consuming()
-    except KeyboardInterrupt:
+    except Exception:
+        log.exception("Got exception consuming on the training report queue")
+    finally:
         channel.stop_consuming()
     connection.close()
     log.info("Finishing report queue")

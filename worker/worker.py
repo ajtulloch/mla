@@ -1,4 +1,3 @@
-
 import ml
 import json
 import logging
@@ -9,7 +8,10 @@ log = logging.getLogger(__name__)
 
 
 def batch_train(request):
+    log.info("Creating report for request: %s", request)
     assert request.trainingData.source == ml_pb2.INLINE
-    return ml_pb2.TrainingReport(
+    report = ml_pb2.TrainingReport(
         jsonResult=json.dumps(
             ml.Reporter.report(request.trainingData.inlineData)))
+    log.info("Report constructed: %s", report)
+    return report

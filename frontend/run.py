@@ -1,7 +1,10 @@
 from app import app
 from app.queue import queue
 import threading
+import logging
 
-threading.Thread(target=queue.start_training_queue).start()
+logging.basicConfig(level=logging.INFO)
+
+threading.Thread(target=queue.start_training_report_queue).start()
 
 app.run(debug = True)

@@ -1,83 +1,83 @@
 <div>
 
-    <h2>Trainingresults</h2>
+  <h2>Trainingresults</h2>
 
-    <script type = "text/ng-template" id="TrainingResults-save.html">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form name="form" role="form" novalidate
-                      class="ng-scope ng-invalid ng-invalid-required ng-dirty"
-                      ng-submit="ok()">
+  <script type = "text/ng-template" id="TrainingResults-save.html">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form name="form" role="form" novalidate
+              class="ng-scope ng-invalid ng-invalid-required ng-dirty"
+              ng-submit="ok()">
 
-                    <div class="modal-header">
-                        <button type="button" class="close"
-                                ng-click="cancel()">&times;</button>
-                        <h4 class="modal-title" id="myTrainingResultsLabel">Create or edit a TrainingResults</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>ID</label>
-                            <input type="text" class="form-control" name="id"
-                                   ng-model="TrainingResults.id" readonly>
-                        </div>
-
-                        
-                        <div class="form-group">
-                            <label>jsonString:</label>
-                            
-                            <input type="text" class="form-control" name="jsonString"
-                                   ng-model="TrainingResults.jsonString" ng-required="true"
-                                   />
-                            <span class="error" ng-show="form.jsonString.$error.minlength">Must be at least  characters.</span>
-                            <span class="error" ng-show="form.jsonString.$error.maxlength">Must be at most  characters.</span>
-                        </div>
-                        
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" ng-click="cancel()">Cancel
-                        </button>
-                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
+          <div class="modal-header">
+            <button type="button" class="close"
+                    ng-click="cancel()">&times;</button>
+            <h4 class="modal-title" id="myTrainingResultsLabel">Create or edit a TrainingResults</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>ID</label>
+              <input type="text" class="form-control" name="id"
+                     ng-model="TrainingResults.id" readonly>
             </div>
-        </div>
-    </script>
 
-    <button class="btn btn-primary btn-lg" ng-click="create()">
-        <span class="glyphicon glyphicon-flash"></span> Create a new TrainingResults
-    </button>
+            
+            <div class="form-group">
+              <label>jsonString:</label>
+              
+              <input type="text" class="form-control" name="jsonString"
+                     ng-model="TrainingResults.jsonString" ng-required="true"
+                     />
+              <span class="error" ng-show="form.jsonString.$error.minlength">Must be at least  characters.</span>
+              <span class="error" ng-show="form.jsonString.$error.maxlength">Must be at most  characters.</span>
+            </div>
+            
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>ID</th>
-                
-                <th>jsonString</th>
-                
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="TrainingResults in Trainingresults">
-                <td>{{TrainingResults.id}}</td>
-                
-                <td>{{TrainingResults.jsonString }}</td>
-                
-                <td>
-                    <button type="submit"
-                            ng-click="update(TrainingResults.id)"
-                            class="btn">
-                        <span class="glyphicon glyphicon-pencil"></span> Edit
-                    </button>
-                    <button type="submit"
-                            ng-click="delete(TrainingResults.id)"
-                            class="btn btn-danger">
-                        <span class="glyphicon glyphicon-remove-circle"></span> Delete
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="cancel()">Cancel
+            </button>
+            <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </script>
+
+  <button class="btn btn-primary btn-lg" ng-click="create()">
+    <span class="glyphicon glyphicon-flash"></span> Create a new TrainingResults
+  </button>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          
+          <th>jsonString</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="TrainingResults in Trainingresults">
+          <td>{{TrainingResults.id}}</td>
+          
+          <td>{{TrainingResults.jsonString }}</td>
+          
+          <td>
+            <button type="submit"
+                    ng-click="update(TrainingResults.id)"
+                    class="btn">
+              <span class="glyphicon glyphicon-pencil"></span> Edit
+            </button>
+            <button type="submit"
+                    ng-click="delete(TrainingResults.id)"
+                    class="btn btn-danger">
+              <span class="glyphicon glyphicon-remove-circle"></span> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -42,5 +42,5 @@ def main(rabbit_mq, training_queue, report_queue):
     connection.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     argh.dispatch_command(main)

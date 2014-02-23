@@ -5,6 +5,9 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-threading.Thread(target=queue.start_training_report_queue).start()
+# Fire up queue thread
+queue_thread = threading.Thread(target=queue.start_training_report_queue)
+queue_thread.daemon = True
+queue_thread.start()
 
 app.run(debug = True)

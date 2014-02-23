@@ -26,8 +26,6 @@ def get_BatchTrainingRequest(id):
 @app.route('/app/Batchtrainingrequests', methods = ['POST'])
 def create_BatchTrainingRequest():
     log.info("Request: %s", request)
-    log.info("Request data: %s", request.data)
-    log.info("Request JSON: %s", request.json)
     entity = BatchTrainingRequest.BatchTrainingRequest(
         trainingData = json.dumps(request.json['trainingData'])
     )

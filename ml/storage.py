@@ -1,6 +1,6 @@
 import json
 import logging
-import pdb
+
 log = logging.getLogger(__name__)
 
 EXAMPLE_TABLE_NAME = 'requests'

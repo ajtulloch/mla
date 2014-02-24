@@ -37,7 +37,7 @@ message BatchTrainRequest {
 message Model {
   enum Algorithm {
     LOGISTIC_REGRESSION = 1;
-    GRADIENT_BOOSTING = 2;
+    GRADIENT_BOOSTED = 2;
     RANDOM_FORESTS = 3;
     LINEAR_SVM = 4;
     NONLINEAR_SVM = 5;
@@ -48,7 +48,7 @@ message Model {
     message Parameter {
       optional string name = 1;
       optional double value = 2;
-    }
+    };
     repeated Parameter hyperParameters = 1;
   };
 
@@ -67,7 +67,7 @@ message Model {
 
     message Performance {
       optional Metric metric = 1;
-      optional double value = 2;
+      optional double score = 2;
     }
     repeated Performance metrics = 1;
   };
@@ -97,11 +97,14 @@ message Model {
 
 
 message TrainingReport {
-  message DataStatistics {
+  message SummaryStatistics {
     // Describes various aspects of the data
+    optional int64 numExamples = 1;
+    optional int64 numPositives = 2;
   };
 
   optional string jsonResult = 1;
 
-  repeated Model models = 2;
+  optional SummaryStatistics summaryStatistics = 2;
+  repeated Model models = 3;
 };

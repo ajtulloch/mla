@@ -1,6 +1,5 @@
-from sklearn import linear_model
+from sklearn import linear_model, ensemble, cross_validation
 from gen.protobufs.ml_pb2 import TrainingReport, Model
-from sklearn import cross_validation
 import cPickle
 
 import numpy as np
@@ -21,27 +20,48 @@ PB_METRICS = {
     Model.PerformanceStatistics.ROC_AUC: 'roc_auc',
 }
 
+MODEL_BUILDERS = {
+    Model.LOGISTIC_REGRESSION:
+    lambda X, y: (linear_model.LogisticRegression().fit(X, y),
+                  Model.Parameters(),
+                  Model.FeatureImportances()),
+    Model.GRADIENT_BOOSTED:
+    lambda X, y: (ensemble.GradientBoostingClassifier().fit(X, y),
+                  Model.Parameters(),
+                  Model.FeatureImportances()),
+}
+
+
 def summary_statistics(X, y):
     return TrainingReport.SummaryStatistics(
         numExamples=len(y), numPositives=len(y[y > 0]))
 
 
 def performance_statistics(clf, X, y):
-    statistics = Model.PerformanceStatistics(metrics=[])
-    for pb_metric, sklearn_metric_string in PB_METRICS.iteritems():
-        try:
-            statistics.metrics.append(Model.PerformanceStatistics.Performance(
-                metric=pb_metric,
-                score=cross_validation.cross_val_score(
-                    clf, X, y, scoring=sklearn_metric_string)))
-        except:
-            log.exception("Exception computing metric: %s",
-                          (pb_metric, sklearn_metric_string))
-    return statistics
+    def performance(metric):
+        folds = \
+            cross_validation.cross_val_score(clf, X, y,
+                                             scoring=PB_METRICS[metric])
+        return Model.PerformanceStatistics.Performance(
+            metric=metric, score=np.mean(folds))
+    metrics = [performance(metric) for metric in PB_METRICS.iterkeys()]
+    return Model.PerformanceStatistics(metrics=metrics)
 
 
 def serialized(clf):
-    return Model.Serialized(pickledStrings=cPickle.dumps(clf))
+    return Model.Serialized(pickledString=cPickle.dumps(clf))
+
+
+def build_model(algorithm, fit_function):
+    def run(X, y):
+        clf, parameters, featureImportances = fit_function(X, y)
+        return Model(
+            algorithm=algorithm,
+            parameters=parameters,
+            performanceStatistics=performance_statistics(clf, X, y),
+            featureImportances=featureImportances,
+            serialized=serialized(clf))
+    return run
 
 
 class Reporter(object):
@@ -59,6 +79,15 @@ class Reporter(object):
             log.info("Metric: %s", scores)
         return results
 
+
+class ProtobufReporter(object):
     @staticmethod
     def build(online_train_requests):
-        return
+        X = np.array([list(r.features) for r in online_train_requests])
+        y = np.array([r.label for r in online_train_requests])
+        
+        models = [build_model(algorithm, fit_function)(X, y)
+                  for algorithm, fit_function in MODEL_BUILDERS.iteritems()]
+        return TrainingReport(
+            summaryStatistics=summary_statistics(X, y),
+            models=models)

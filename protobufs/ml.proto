@@ -34,6 +34,74 @@ message BatchTrainRequest {
   optional TrainingData trainingData = 1;
 };
 
+message Model {
+  enum Algorithm {
+    LOGISTIC_REGRESSION = 1;
+    GRADIENT_BOOSTING = 2;
+    RANDOM_FORESTS = 3;
+    LINEAR_SVM = 4;
+    NONLINEAR_SVM = 5;
+  };
+
+  message Parameters {
+    // hyperparameters used, etc
+    message Parameter {
+      optional string name = 1;
+      optional double value = 2;
+    }
+    repeated Parameter hyperParameters = 1;
+  };
+
+  // Loss statistics
+  message PerformanceStatistics {
+    // Performance of the model (cross validated, etc)
+    enum Metric {
+      ACCURACY = 1;
+      AVERAGE_PRECISION = 2;
+      F1 = 3;
+      LOG_LOSS = 4;
+      PRECISION = 5;
+      RECALL = 6;
+      ROC_AUC = 7;
+    };
+
+    message Performance {
+      optional Metric metric = 1;
+      optional double value = 2;
+    }
+    repeated Performance metrics = 1;
+  };
+
+  message FeatureImportances {
+    // Classifier-specific metric
+    message FeatureImportance {
+      // TODO(implement)?
+      optional int64 feature = 1;
+      optional double importance = 2;
+    };
+    repeated FeatureImportance importances = 1;
+  };
+
+  // TODO(tulloch) - ?
+  message Serialized {
+    optional bytes pickledString = 1;
+    optional string jsonString = 2;
+  }
+
+  optional Algorithm algorithm = 1;
+  optional Parameters parameters = 2;
+  optional PerformanceStatistics performanceStatistics = 3;
+  optional FeatureImportances featureImportances = 4;
+  optional Serialized serialized = 5;
+};
+
+
 message TrainingReport {
+  message DataStatistics {
+    // Describes various aspects of the data
+  };
+
   optional string jsonResult = 1;
+
+  repeated Model models = 2;
 };

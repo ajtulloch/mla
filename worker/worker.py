@@ -1,4 +1,5 @@
-import ml
+from ml.report import Reporter, ProtobufReporter
+
 import json
 import logging
 
@@ -7,11 +8,16 @@ import gen.protobufs.ml_pb2 as ml_pb2
 log = logging.getLogger(__name__)
 
 
+def get_training_data(request):
+    if request.trainingData.source != ml_pb2.INLINE:
+        raise NotImplemented
+    return request.trainingData.inlineData
+
+
 def batch_train(request):
     log.debug("Creating report for request: %s", request)
-    assert request.trainingData.source == ml_pb2.INLINE
-    report = ml_pb2.TrainingReport(
-        jsonResult=json.dumps(
-            ml.Reporter.report(request.trainingData.inlineData)))
+    training_data = get_training_data(request)
+    report = ProtobufReporter().build(training_data)
+    report.jsonResult = json.dumps(Reporter.report(training_data))
     log.debug("Report constructed: %s", report)
     return report

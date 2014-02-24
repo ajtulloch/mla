@@ -64,6 +64,7 @@ def build_model(algorithm, fit_function):
     return run
 
 
+# TODO(tulloch) - remove this
 class Reporter(object):
     @staticmethod
     def report(online_train_requests):
@@ -85,7 +86,7 @@ class ProtobufReporter(object):
     def build(online_train_requests):
         X = np.array([list(r.features) for r in online_train_requests])
         y = np.array([r.label for r in online_train_requests])
-        
+
         models = [build_model(algorithm, fit_function)(X, y)
                   for algorithm, fit_function in MODEL_BUILDERS.iteritems()]
         return TrainingReport(

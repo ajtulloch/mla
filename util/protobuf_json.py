@@ -101,6 +101,13 @@ def pb2json(pb):
     return js
 
 
+def enum2string(enum_cls, val):
+    desc = enum_cls.DESCRIPTOR
+    for (k, v) in desc.values_by_name.iteritems():
+        if v.number == val:
+            return k
+    raise NotImplemented
+
 _ftype2js = {
     FD.TYPE_DOUBLE: float,
     FD.TYPE_FLOAT: float,

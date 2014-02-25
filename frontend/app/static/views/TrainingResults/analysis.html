@@ -3,27 +3,28 @@
 
   <h3>Summary</h3>
   <p>
-  Trained on {{ report.summary.numSamples }} samples, with {{
-  report.summary.numPositives}} + events and {{
-  report.summary.numNegatives }} - events.
+    Trained on {{ results.jsonReport.summaryStatistics.numExamples }} samples.
+    {{ results.jsonReport.summaryStatistics.numPositives}} positive events
+    ({{ 100 * (results.jsonReport.summaryStatistics.numPositives /
+    results.jsonReport.summaryStatistics.numExamples) | number:0}}%).
   </p>
 
   <h3>Visualization</h3>
-  
-  
-  <h3>Metrics</h3>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="(metric, value) in report.json">
-        <td>{{ metric }}</td>
-        <td>{{ value | number:4 }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div ng-repeat="model in results.jsonReport.models">
+    <h4>{{ algorithmEnumToName[model.algorithm] }}</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="metric in model.performanceStatistics.metrics">
+          <td>{{ metricEnumToName[metric.metric] }}</td>
+          <td>{{ metric.score | number:2 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -84,16 +84,24 @@ angular.module('app')
     'TrainingResultsCtrl',
     ['$scope', '$routeParams', 'TrainingResults', '$log',
      function($scope, $routeParams, TrainingResults, $log) {
-       $scope.report = TrainingResults.get({id:$routeParams.reportId}, function() {
-         $scope.report.json = angular.fromJson($scope.report.jsonString);
-         // Fake data for now
-         $scope.report.summary = {
-           numSamples: 100,
-           numPositives: 80,
-           numNegatives: 50,
-         };
-       });
-       $log.debug($scope.report);
+       $scope.results = TrainingResults.get({id:$routeParams.reportId});
+       $log.info($scope.results);
+       $scope.algorithmEnumToName = {
+         1: 'Logistic Regression',
+         2: 'Gradient Boosted Decision Trees',
+         3: 'Random Forests',
+         4: 'Linear SVM',
+         5: 'Nonlinear SVM',
+       }
+       $scope.metricEnumToName = {
+         1: 'Accuracy',
+         2: 'Average Precision',
+         3: 'f1',
+         4: 'Log Loss',
+         5: 'Precision',
+         6: 'Recall',
+         7: 'ROC AUC',
+       };
      }
     ]
   )

@@ -2,8 +2,9 @@ from app import db, app
 from app.models import TrainingResults
 import pika
 import gen.protobufs.ml_pb2 as ml_pb2
-
+import util.protobuf_json as protobuf_json
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +22,9 @@ def on_report(ch, method, properties, body):
         request.ParseFromString(body)
 
         log.info("Parsed report to request: %s", request)
-        entity = TrainingResults.TrainingResults(jsonString=request.jsonResult)
+        entity = TrainingResults.TrainingResults(
+            jsonString=request.jsonResult,
+            jsonReport=json.dumps(protobuf_json.pb2json(request)))
         db.session.add(entity)
         db.session.commit()
         log.info("Saved entity to db: %s", entity)

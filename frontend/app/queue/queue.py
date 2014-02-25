@@ -23,7 +23,6 @@ def on_report(ch, method, properties, body):
 
         log.info("Parsed report to request: %s", request)
         entity = TrainingResults.TrainingResults(
-            jsonString=request.jsonResult,
             jsonReport=json.dumps(protobuf_json.pb2json(request)))
         db.session.add(entity)
         db.session.commit()

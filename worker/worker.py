@@ -1,8 +1,5 @@
-from ml.report import Reporter, ProtobufReporter
-
-import json
+from ml.report import ProtobufReporter
 import logging
-
 import gen.protobufs.ml_pb2 as ml_pb2
 
 log = logging.getLogger(__name__)
@@ -18,6 +15,5 @@ def batch_train(request):
     log.debug("Creating report for request: %s", request)
     training_data = get_training_data(request)
     report = ProtobufReporter().build(training_data)
-    report.jsonResult = json.dumps(Reporter.report(training_data))
     log.debug("Report constructed: %s", report)
     return report

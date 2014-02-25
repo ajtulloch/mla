@@ -64,23 +64,6 @@ def build_model(algorithm, fit_function):
     return run
 
 
-# TODO(tulloch) - remove this
-class Reporter(object):
-    @staticmethod
-    def report(online_train_requests):
-        results = {}
-        X = np.array([list(r.features) for r in online_train_requests])
-        y = np.array([r.label for r in online_train_requests])
-        log.info("X: %s, y: %s", X, y)
-        for metric in METRICS:
-            log.info("Computing metric: %s", metric)
-            scores = cross_validation.cross_val_score(
-                linear_model.LogisticRegression(), X, y, scoring=metric)
-            results[metric] = np.mean(scores)
-            log.info("Metric: %s", scores)
-        return results
-
-
 class ProtobufReporter(object):
     @staticmethod
     def build(online_train_requests):

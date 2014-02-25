@@ -103,8 +103,6 @@ message TrainingReport {
     optional int64 numPositives = 2;
   };
 
-  optional string jsonResult = 1;
-
   optional SummaryStatistics summaryStatistics = 2;
   repeated Model models = 3;
 };

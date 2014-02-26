@@ -9,12 +9,22 @@
     results.jsonReport.summaryStatistics.numExamples) | number:0}}%).
   </p>
 
+  <h3>Graphs</h3>
+  <div class="chart">
+    <nvd3-line-chart data="results.jsonReport.rocCurves" legend="true">
+      <svg></svg>
+    </nvd3-line-chart>
+  </div>
+
   <h3>Algorithms</h3>
   <div ng-repeat="model in results.jsonReport.models">
     <h4>{{ algorithmEnumToName[model.algorithm] }}</h4>
+    <div class="chart">
+      <nvd3-line-chart data="model.performanceStatistics.lineRocCurve">
+        <svg></svg>
+      </nvd3-line-chart>
+    </div>
 
-    <h4>ROC Curve</h4>
-    
     <table class="table table-hover">
       <thead>
         <tr>

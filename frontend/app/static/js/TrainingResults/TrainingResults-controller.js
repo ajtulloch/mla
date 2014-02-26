@@ -84,8 +84,27 @@ angular.module('app')
     'TrainingResultsCtrl',
     ['$scope', '$routeParams', 'TrainingResults', '$log',
      function($scope, $routeParams, TrainingResults, $log) {
-       $scope.results = TrainingResults.get({id:$routeParams.reportId});
+       $scope.results = TrainingResults.get({id:$routeParams.reportId}, function() {
+         _.map($scope.results.jsonReport.models, function(model) {
+           model.performanceStatistics.lineRocCurve = [{
+             "key": $scope.algorithmEnumToName[model.algorithm],
+             "values": _.map(
+               model.performanceStatistics.rocCurve,
+               function(p) { return [p.falsePositiveRate, p.truePositiveRate] })
+           }];
+           $log.info(model.performanceStatistics.lineRocCurve);
+         });
+         
+         $scope.results.jsonReport.rocCurves =
+           _.chain($scope.results.jsonReport.models)
+           .map(function(model) {
+             return model.performanceStatistics.lineRocCurve[0];
+           })
+           .value();
+         $log.info("Curves: ", $scope.results.jsonReport.rocCurves);
+       });
        $log.info($scope.results);
+
        $scope.algorithmEnumToName = {
          1: 'Logistic Regression',
          2: 'Gradient Boosted Decision Trees',
@@ -105,4 +124,5 @@ angular.module('app')
      }
     ]
   )
+  
 

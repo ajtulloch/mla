@@ -17,7 +17,7 @@ channel.queue_declare(queue=app.config['REPORT_QUEUE'])
 def on_report(ch, method, properties, body):
     # Writes the recieved response to the DB
     try:
-        log.info("Recieved report: %s", body)
+        log.info("Recieved report")
         request = ml_pb2.TrainingReport()
         request.ParseFromString(body)
 

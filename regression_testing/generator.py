@@ -5,7 +5,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def send_batch_request(url, num_features=3, num_examples=10):
+def send_batch_request(url, target=5, num_examples=1000):
     c = client.MLApplianceClient(url)
-    return c.batch_train(random_data.label_feature_pair(num_features)
-                         for _ in range(num_examples))
+    dataset = list(random_data.mnist_label_feature_pairs(target=target))
+    return c.batch_train(dataset[:num_examples])

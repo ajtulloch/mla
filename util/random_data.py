@@ -1,5 +1,14 @@
 import gen.protobufs.ml_pb2 as ml_pb2
+from sklearn import datasets
 import numpy as np
+
+
+def mnist_label_feature_pairs(target):
+    digits = datasets.load_digits()
+    X, y = digits.data, digits.target
+    y = map(lambda x: x == target, y)
+    for features, label in zip(X, y):
+        yield (bool(label), [f for f in features])
 
 
 def label_feature_pair(num_features):

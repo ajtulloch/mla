@@ -1,14 +1,12 @@
-from sklearn import linear_model, ensemble, cross_validation
+from sklearn import linear_model, ensemble, cross_validation, svm
+
 from gen.protobufs.ml_pb2 import TrainingReport, Model
 import cPickle
-
+from performance import roc_curve
 import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
-
-METRICS = ['accuracy', 'average_precision', 'f1',
-           'log_loss', 'precision', 'recall', 'roc_auc']
 
 PB_METRICS = {
     Model.PerformanceStatistics.ACCURACY: 'accuracy',
@@ -29,6 +27,18 @@ MODEL_BUILDERS = {
     lambda X, y: (ensemble.GradientBoostingClassifier().fit(X, y),
                   Model.Parameters(),
                   Model.FeatureImportances()),
+    Model.RANDOM_FORESTS:
+    lambda X, y: (ensemble.RandomForestClassifier().fit(X, y),
+                  Model.Parameters(),
+                  Model.FeatureImportances()),
+    Model.LINEAR_SVM:
+    lambda X, y: (svm.SVC(kernel='linear', probability=True).fit(X, y),
+                  Model.Parameters(),
+                  Model.FeatureImportances()),
+    Model.NONLINEAR_SVM:
+    lambda X, y: (svm.SVC(kernel='rbf', probability=True).fit(X, y),
+                  Model.Parameters(),
+                  Model.FeatureImportances()),
 }
 
 
@@ -38,22 +48,27 @@ def summary_statistics(X, y):
 
 
 def performance_statistics(clf, X, y):
-    def performance(metric):
+    def cv_performance(metric):
         folds = \
-            cross_validation.cross_val_score(clf, X, y,
-                                             scoring=PB_METRICS[metric])
+            cross_validation.cross_val_score(
+                clf, X, y, scoring=PB_METRICS[metric], n_jobs=-1)
         return Model.PerformanceStatistics.Performance(
             metric=metric, score=np.mean(folds))
-    metrics = [performance(metric) for metric in PB_METRICS.iterkeys()]
-    return Model.PerformanceStatistics(metrics=metrics)
+    metrics = [cv_performance(metric) for metric in PB_METRICS.iterkeys()]
+    return Model.PerformanceStatistics(
+        metrics=metrics,
+        rocCurve=roc_curve(clf, X, y))
 
 
 def serialized(clf):
-    return Model.Serialized(pickledString=cPickle.dumps(clf))
+    pickledString = cPickle.dumps(clf)
+    # pickled unused while we figure out persistence strategy.
+    return Model.Serialized() 
 
 
 def build_model(algorithm, fit_function):
     def run(X, y):
+        log.info("Running algorithm: %s", algorithm)
         clf, parameters, featureImportances = fit_function(X, y)
         return Model(
             algorithm=algorithm,
@@ -67,11 +82,13 @@ def build_model(algorithm, fit_function):
 class ProtobufReporter(object):
     @staticmethod
     def build(online_train_requests):
+        log.info("Starting training on %s requests", len(online_train_requests))
         X = np.array([list(r.features) for r in online_train_requests])
         y = np.array([r.label for r in online_train_requests])
 
         models = [build_model(algorithm, fit_function)(X, y)
                   for algorithm, fit_function in MODEL_BUILDERS.iteritems()]
+        log.info("Trained %s models", len(models))
         return TrainingReport(
             summaryStatistics=summary_statistics(X, y),
             models=models)

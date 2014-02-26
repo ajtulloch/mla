@@ -68,8 +68,15 @@ message Model {
     message Performance {
       optional Metric metric = 1;
       optional double score = 2;
-    }
+    };
+
+    message ROCPoint {
+      optional double falsePositiveRate = 1;
+      optional double truePositiveRate = 2;
+    };
+    
     repeated Performance metrics = 1;
+    repeated ROCPoint rocCurve = 2;
   };
 
   message FeatureImportances {

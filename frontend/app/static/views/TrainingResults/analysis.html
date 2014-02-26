@@ -9,35 +9,56 @@
     results.jsonReport.summaryStatistics.numExamples) | number:0}}%).
   </p>
 
-  <h3>Graphs</h3>
   <div class="chart">
-    <nvd3-line-chart data="results.jsonReport.rocCurves" legend="true">
+    <nvd3-line-chart
+       data="results.jsonReport.rocCurves"
+       showLegend="true"
+       isArea="true"
+       showXAxis="true"
+       showYAxis="true">
       <svg></svg>
     </nvd3-line-chart>
   </div>
 
-  <h3>Algorithms</h3>
-  <div ng-repeat="model in results.jsonReport.models">
-    <h4>{{ algorithmEnumToName[model.algorithm] }}</h4>
-    <div class="chart">
-      <nvd3-line-chart data="model.performanceStatistics.lineRocCurve">
-        <svg></svg>
-      </nvd3-line-chart>
-    </div>
+  <h3>Algorithm Performance</h3>
 
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="metric in model.performanceStatistics.metrics">
-          <td>{{ metricEnumToName[metric.metric] }}</td>
-          <td>{{ metric.score | number:2 }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <tabset class="modelTabs">
+    <tab
+       ng-repeat="model in results.jsonReport.models"
+       heading="{{ algorithmEnumToName[model.algorithm] }}"
+       select="onTabClick()">
+      <div>
+        <h4>ROC</h4>
+        <div class="chart">
+          <nvd3-line-chart
+             data="model.performanceStatistics.lineRocCurve"
+             isArea="true"
+             showXAxis="true"
+             showYAxis="true">
+            <svg></svg>
+          </nvd3-line-chart>
+        </div>
+
+        <h4>Optimal Parameters</h4>
+        <!-- Table of optimized hyperparameters, with some
+        visualization of the training/test loss on each parameter? -->
+        
+        <h4>Metrics</h4>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="metric in model.performanceStatistics.metrics">
+              <td>{{ metricEnumToName[metric.metric] }}</td>
+              <td>{{ metric.score | number:2 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </tab>
+  </tabset>
 </div>

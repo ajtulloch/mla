@@ -85,6 +85,8 @@ angular.module('app')
     ['$scope', '$routeParams', 'TrainingResults', '$log',
      function($scope, $routeParams, TrainingResults, $log) {
        $scope.results = TrainingResults.get({id:$routeParams.reportId}, function() {
+
+         // Construct ROC curve
          _.map($scope.results.jsonReport.models, function(model) {
            model.performanceStatistics.lineRocCurve = [{
              "key": $scope.algorithmEnumToName[model.algorithm],
@@ -101,6 +103,7 @@ angular.module('app')
              return model.performanceStatistics.lineRocCurve[0];
            })
            .value();
+         
          $log.info("Curves: ", $scope.results.jsonReport.rocCurves);
        });
        $log.info($scope.results);
@@ -121,8 +124,7 @@ angular.module('app')
          6: 'Recall',
          7: 'ROC AUC',
        };
+       $scope.onTabClick = function() { jQuery(window).trigger('resize'); };
      }
     ]
   )
-  
-

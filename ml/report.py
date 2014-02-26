@@ -20,8 +20,8 @@ METRICS = {
 MODEL_BUILDERS = {
     Model.LOGISTIC_REGRESSION: simple_builder(
         linear_model.LogisticRegression()),
-    Model.GRADIENT_BOOSTED: simple_builder(
-        ensemble.GradientBoostingClassifier()),
+    # Model.GRADIENT_BOOSTED: simple_builder(
+    #     ensemble.GradientBoostingClassifier(n_estimators=20)),
     Model.RANDOM_FORESTS: simple_builder(
         ensemble.RandomForestClassifier()),
     Model.LINEAR_SVM: simple_builder(
@@ -33,9 +33,9 @@ MODEL_BUILDERS = {
 
 def performance_statistics(clf, X, y):
     def cv_performance(metric):
-        folds = \
-            cross_validation.cross_val_score(
-                clf, X, y, scoring=METRICS[metric], n_jobs=-1)
+        folds = cross_validation.cross_val_score(
+            clf, X, y, scoring=METRICS[metric], n_jobs=-1)
+
         return Model.PerformanceStatistics.Performance(
             metric=metric, score=np.mean(folds))
     metrics = [cv_performance(metric) for metric in METRICS.iterkeys()]

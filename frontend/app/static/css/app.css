@@ -7,3 +7,6 @@ body {
     width: 500px;
     height: 300px;
 }
+
+/* http://angular-ui.github.io/bootstrap/  */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

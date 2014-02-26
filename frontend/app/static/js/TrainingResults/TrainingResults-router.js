@@ -4,7 +4,7 @@ angular.module('app')
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/reports', {
-        templateUrl: 'views/TrainingResults/Trainingresults.html',
+        templateUrl: '/static/views/TrainingResults/Trainingresults.html',
         controller: 'TrainingResultsController',
         resolve:{
           resolvedTrainingResults: ['TrainingResults', function (TrainingResults) {
@@ -13,7 +13,7 @@ angular.module('app')
         }
       })
       .when('/reports/:reportId', {
-        templateUrl: 'views/TrainingResults/analysis.html',
+        templateUrl: '/static/views/TrainingResults/analysis.html',
         controller: 'TrainingResultsCtrl'
       });
     }]);

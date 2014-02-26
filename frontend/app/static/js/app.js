@@ -3,7 +3,7 @@ angular.module('app', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.date', 'nvd3
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/home/home.html', 
+        templateUrl: '/static/views/home/home.html', 
         controller: 'HomeController'})
       .otherwise({redirectTo: '/'});
   }]);

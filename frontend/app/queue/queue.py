@@ -8,11 +8,8 @@ import json
 
 log = logging.getLogger(__name__)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(app.config['RABBITMQ']))
-channel = connection.channel()
-channel.queue_declare(queue=app.config['TRAINING_QUEUE'])
-channel.queue_declare(queue=app.config['REPORT_QUEUE'])
-
+CONNECTION = None
+CHANNEL = None
 
 def on_report(ch, method, properties, body):
     # Writes the recieved response to the DB
@@ -34,7 +31,7 @@ def on_report(ch, method, properties, body):
 def send_batch_training_request(request):
     log.info("Sending batch request to queue")
     log.debug("Sending batch request: %s", request)
-    channel.basic_publish(
+    CHANNEL.basic_publish(
         exchange='',
         routing_key=app.config['TRAINING_QUEUE'],
         body=request.SerializeToString())
@@ -43,13 +40,19 @@ def send_batch_training_request(request):
 
 
 def start_training_report_queue():
+    global CONNECTION
+    CONNECTION = pika.BlockingConnection(pika.ConnectionParameters(app.config['RABBITMQ']))
+    CHANNEL = CONNECTION.channel()
+    CHANNEL.queue_declare(queue=app.config['TRAINING_QUEUE'])
+    CHANNEL.queue_declare(queue=app.config['REPORT_QUEUE'])
+
     log.info("Starting report queue")
-    channel.basic_consume(on_report, queue=app.config['REPORT_QUEUE'], no_ack=True)
+    CHANNEL.basic_consume(on_report, queue=app.config['REPORT_QUEUE'], no_ack=True)
     try:
-        channel.start_consuming()
+        CHANNEL.start_consuming()
     except Exception:
         log.exception("Got exception consuming on the training report queue")
     finally:
-        channel.stop_consuming()
-    connection.close()
+        CHANNEL.stop_consuming()
+    CONNECTION.close()
     log.info("Finishing report queue")

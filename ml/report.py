@@ -1,14 +1,13 @@
-from sklearn import linear_model, ensemble, cross_validation, svm
+from sklearn import linear_model, ensemble, svm, cross_validation
 
 from gen.protobufs.ml_pb2 import TrainingReport, Model
-import cPickle
-from performance import roc_curve
+from performance import roc_curve, simple_builder, summary_statistics
 import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
 
-PB_METRICS = {
+METRICS = {
     Model.PerformanceStatistics.ACCURACY: 'accuracy',
     Model.PerformanceStatistics.AVERAGE_PRECISION: 'average_precision',
     Model.PerformanceStatistics.F1: 'f1',
@@ -19,51 +18,36 @@ PB_METRICS = {
 }
 
 MODEL_BUILDERS = {
-    Model.LOGISTIC_REGRESSION:
-    lambda X, y: (linear_model.LogisticRegression().fit(X, y),
-                  Model.Parameters(),
-                  Model.FeatureImportances()),
-    Model.GRADIENT_BOOSTED:
-    lambda X, y: (ensemble.GradientBoostingClassifier().fit(X, y),
-                  Model.Parameters(),
-                  Model.FeatureImportances()),
-    Model.RANDOM_FORESTS:
-    lambda X, y: (ensemble.RandomForestClassifier().fit(X, y),
-                  Model.Parameters(),
-                  Model.FeatureImportances()),
-    Model.LINEAR_SVM:
-    lambda X, y: (svm.SVC(kernel='linear', probability=True).fit(X, y),
-                  Model.Parameters(),
-                  Model.FeatureImportances()),
-    Model.NONLINEAR_SVM:
-    lambda X, y: (svm.SVC(kernel='rbf', probability=True).fit(X, y),
-                  Model.Parameters(),
-                  Model.FeatureImportances()),
+    Model.LOGISTIC_REGRESSION: simple_builder(
+        linear_model.LogisticRegression()),
+    Model.GRADIENT_BOOSTED: simple_builder(
+        ensemble.GradientBoostingClassifier()),
+    Model.RANDOM_FORESTS: simple_builder(
+        ensemble.RandomForestClassifier()),
+    Model.LINEAR_SVM: simple_builder(
+        svm.SVC(kernel='linear', probability=True)),
+    Model.NONLINEAR_SVM: simple_builder(
+        svm.SVC(kernel='rbf', probability=True)),
 }
-
-
-def summary_statistics(X, y):
-    return TrainingReport.SummaryStatistics(
-        numExamples=len(y), numPositives=len(y[y > 0]))
 
 
 def performance_statistics(clf, X, y):
     def cv_performance(metric):
         folds = \
             cross_validation.cross_val_score(
-                clf, X, y, scoring=PB_METRICS[metric], n_jobs=-1)
+                clf, X, y, scoring=METRICS[metric], n_jobs=-1)
         return Model.PerformanceStatistics.Performance(
             metric=metric, score=np.mean(folds))
-    metrics = [cv_performance(metric) for metric in PB_METRICS.iterkeys()]
+    metrics = [cv_performance(metric) for metric in METRICS.iterkeys()]
     return Model.PerformanceStatistics(
         metrics=metrics,
         rocCurve=roc_curve(clf, X, y))
 
 
 def serialized(clf):
-    pickledString = cPickle.dumps(clf)
+    # pickledString = cPickle.dumps(clf)
     # pickled unused while we figure out persistence strategy.
-    return Model.Serialized() 
+    return Model.Serialized()
 
 
 def build_model(algorithm, fit_function):
@@ -82,13 +66,16 @@ def build_model(algorithm, fit_function):
 class ProtobufReporter(object):
     @staticmethod
     def build(online_train_requests):
-        log.info("Starting training on %s requests", len(online_train_requests))
-        X = np.array([list(r.features) for r in online_train_requests])
+        log.info("Starting training on %s examples",
+                 len(online_train_requests))
+
+        X = np.array([np.array(r.features) for r in online_train_requests])
         y = np.array([r.label for r in online_train_requests])
 
         models = [build_model(algorithm, fit_function)(X, y)
                   for algorithm, fit_function in MODEL_BUILDERS.iteritems()]
         log.info("Trained %s models", len(models))
+
         return TrainingReport(
             summaryStatistics=summary_statistics(X, y),
             models=models)
